@@ -1,4 +1,3 @@
-
 def primeFactors(n):
     factorization = []
 
@@ -70,6 +69,8 @@ def fk(k,i):
 
     factors_of_i = primeFactors(i)
 
+    print(factors_of_i)
+
     if areFactorsPower(factors_of_i):
         e = len(set(factors_of_i))
         p = list(set(factors_of_i))[0]
@@ -87,33 +88,33 @@ def fk(k,i):
         # computed_fk[(k,i)] = res
         return res
 
-print(fk(1,2), fk(1,2) == 2)
-print(fk(1,4), fk(1,4) == 2)
+# print(fk(1,2), fk(1,2) == 2)
+# print(fk(1,4), fk(1,4) == 2)
 print(fk(1,18), fk(1,18) == 6)
-print(fk(2,18), fk(2,18) == 36)
+# print(fk(2,18), fk(2,18) == 36)
 
 # print(computed_fk)
 
-def Sk(k,n):
-    total = 0
-    for i in range(1,n+1):
-        print("k = {}, i = {}".format(k,i))
-        total += fk(k,i)
+# def Sk(k,n):
+#     total = 0
+#     for i in range(1,n+1):
+#         # print("k = {}, i = {}".format(k,i))
+#         total += fk(k,i)
+#
+#     return total
 
-    return total
-
-print(Sk(1,10), Sk(1,10) == 41)
-print(Sk(1,100), Sk(1,100) == 3512)
-print(Sk(2,100), Sk(2,100) == 208090)
+# print(Sk(1,10), Sk(1,10) == 41)
+# print(Sk(1,100), Sk(1,100) == 3512)
+# print(Sk(2,100), Sk(2,100) == 208090)
 
 
-def G(N,A):
-    total = 0
-    for k in range(1,N+1):
-        print("k = {}".format(k))
-        total += Sk(k, A)
-    return total
+# def G(N,A):
+#     total = 0
+#     for k in range(1,N+1):
+#         # print("k = {}".format(k))
+#         total += Sk(k, A)
+#     return total
 
 # print(G(3, 10))
-print(G(3, int(1E8))%1000000007 == 338787512)
+# print(G(3, int(1E8))%1000000007 == 338787512)
 # print(G(50, int(1E12))%1000000007)
