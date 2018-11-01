@@ -1,3 +1,8 @@
+from numba import jit
+from time import time
+from multiprocessing import Pool, cpu_count
+
+@jit
 def primeFactors(n):
     factorization = []
 
@@ -22,99 +27,68 @@ def primeFactors(n):
         factorization.append(n)
 
     ##return factorization
-    return [int(x) for x in factorization]
+    return list(set([int(x) for x in factorization]))
 
-def areFactorsPower(factors):
-    ##If there is only 1 unique factor, then the number
-    ##must be able to be represented as a power of a factor
-    return len(set(factors)) == 1 and len(factors) != 1
-
-def gcd(a, b):
-    while b != 0:
-        a, b = b, a % b
-    return a
-
-def coprime(a, b):
-    return gcd(a, b) == 1
-
-def getTwoMults(factors):
-    for ind in range(len(factors)):
-        prod_1 = 1
-        prod_2 = 1
-
-        for i, val in enumerate(factors):
-            if i <= ind:
-                prod_1 *= val
-            else:
-                prod_2 *= val
-
-        if coprime(prod_1, prod_2):
-            break
-
-    return prod_1, prod_2
-
-
-# computed_fk = {}
-
-def fk(k,i):
-    # global computed_fk
-
-    # try:
-    #     return computed_fk[(k,i)]
-    # except:
-    #     pass
-
+@jit
+def fk(i,k):
     if i == 1:
         return 1
 
-    factors_of_i = primeFactors(i)
+    else:
+        factors = primeFactors(i)
+        prod = 1
+        for val in factors:
+            prod *= val**k
+        return prod
 
-    print(factors_of_i)
-
-    if areFactorsPower(factors_of_i):
-        e = len(set(factors_of_i))
-        p = list(set(factors_of_i))[0]
-        # computed_fk[(k,i)] = p**k
-        return p**k
-
-    if len(factors_of_i) == 1:
-        p = factors_of_i[0]
-        # computed_fk[(k,i)] = p**k
-        return p**k
+@jit
+def fkt(t):
+    i, k = t[0], t[1]
+    if i == 1:
+        return 1
 
     else:
-        int1, int2 = getTwoMults(factors_of_i)
-        res = fk(k,int1)*fk(k,int2)
-        # computed_fk[(k,i)] = res
-        return res
+        factors = primeFactors(i)
+        prod = 1
+        for val in factors:
+            prod *= val**k
+        return prod
 
-# print(fk(1,2), fk(1,2) == 2)
-# print(fk(1,4), fk(1,4) == 2)
-print(fk(1,18), fk(1,18) == 6)
-# print(fk(2,18), fk(2,18) == 36)
+@jit
+def Sk(N, k):
+    total = 0
+    for i in range(1, N+1):
+        total += fk(i, k)
+    return total
 
-# print(computed_fk)
-
-# def Sk(k,n):
-#     total = 0
-#     for i in range(1,n+1):
-#         # print("k = {}, i = {}".format(k,i))
-#         total += fk(k,i)
-#
-#     return total
-
-# print(Sk(1,10), Sk(1,10) == 41)
-# print(Sk(1,100), Sk(1,100) == 3512)
-# print(Sk(2,100), Sk(2,100) == 208090)
+# start = time()
+# print(Sk(int(1E7),1))
+# print(time() - start)
+# ###221 seconds to run above code -- 35222287961010
 
 
-# def G(N,A):
-#     total = 0
-#     for k in range(1,N+1):
-#         # print("k = {}".format(k))
-#         total += Sk(k, A)
-#     return total
+if __name__ == '__main__':
+    # def SkP(N,k):
+    #     pool = Pool(processes = int(cpu_count()/2))
+    #     total = sum(pool.map(fkt, [(x, k) for x in range(1, N+1)]))
+    #     pool.close()
+    #     pool.join()
+    #     return total
 
-# print(G(3, 10))
-# print(G(3, int(1E8))%1000000007 == 338787512)
-# print(G(50, int(1E12))%1000000007)
+    # start = time()
+    # print(SkP(int(1E7),1))
+    # print(time() - start)
+    # ###cpu_count/2, 141 seconds -- 35222287961010
+
+    def SkP(N,k):
+        pool = Pool(processes = cpu_count())
+        total = sum(pool.map(fkt, [(x, k) for x in range(1, N+1)]))
+        pool.close()
+        pool.join()
+        return total
+
+    start = time()
+    print(SkP(int(1E7),1)) ###1E8 floors memory
+    print(time() - start)
+    ###cpu_count, 103 seconds -- 35222287961010 (laptop)
+    ###cpu_count, 73 seconds -- 35222287961010 (machine)
