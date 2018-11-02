@@ -1,6 +1,6 @@
 from numba import jit
 from time import time
-from multiprocessing import Pool, cpu_count
+from multiprocessing import Pool
 
 @jit
 def primeFactors(n):
@@ -29,8 +29,20 @@ def primeFactors(n):
     ##return factorization
     return list(set([int(x) for x in factorization]))
 
+# @jit
+# def fk(i,k = 1):
+#     if i == 1:
+#         return 1
+#
+#     else:
+#         factors = primeFactors(i)
+#         prod = 1
+#         for val in factors:
+#             prod *= val**k
+#         return prod
+
 @jit
-def fk(i,k):
+def fk(i):
     if i == 1:
         return 1
 
@@ -38,57 +50,28 @@ def fk(i,k):
         factors = primeFactors(i)
         prod = 1
         for val in factors:
-            prod *= val**k
+            prod *= val
         return prod
 
-@jit
-def fkt(t):
-    i, k = t[0], t[1]
-    if i == 1:
-        return 1
 
-    else:
-        factors = primeFactors(i)
-        prod = 1
-        for val in factors:
-            prod *= val**k
-        return prod
+# @jit
+# def G(N, A):
+#     total = 1*N
+#     for i in range(2, A+1):
+#         x = fk(i, 1)
+#         total += x*(1-x**N)/(1-x)
+#
+#     return total
+#
 
-@jit
-def Sk(N, k):
-    total = 0
-    for i in range(1, N+1):
-        total += fk(i, k)
-    return total
+for i in range(1,101):
+    print("i = {}. Factors = {}. fk_1({}) = {}.".format(i, primeFactors(i), i, fk(i)))
 
-# start = time()
-# print(Sk(int(1E7),1))
-# print(time() - start)
-# ###221 seconds to run above code -- 35222287961010
+for i in range(1,101):
+    # print("i = {}. Factors = {}. fk_1({}) = {}.".format(i, primeFactors(i), i, fk(i)))
 
+    this_tot = 0
+    for j in range(1,i+1):
+        this_tot += fk(j)
 
-if __name__ == '__main__':
-    # def SkP(N,k):
-    #     pool = Pool(processes = int(cpu_count()/2))
-    #     total = sum(pool.map(fkt, [(x, k) for x in range(1, N+1)]))
-    #     pool.close()
-    #     pool.join()
-    #     return total
-
-    # start = time()
-    # print(SkP(int(1E7),1))
-    # print(time() - start)
-    # ###cpu_count/2, 141 seconds -- 35222287961010
-
-    def SkP(N,k):
-        pool = Pool(processes = cpu_count())
-        total = sum(pool.map(fkt, [(x, k) for x in range(1, N+1)]))
-        pool.close()
-        pool.join()
-        return total
-
-    start = time()
-    print(SkP(int(1E7),1)) ###1E8 floors memory
-    print(time() - start)
-    ###cpu_count, 103 seconds -- 35222287961010 (laptop)
-    ###cpu_count, 73 seconds -- 35222287961010 (machine)
+    print("i = {}. Sk_1(i) = {}".format(i, this_tot))
