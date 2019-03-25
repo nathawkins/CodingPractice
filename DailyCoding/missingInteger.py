@@ -9,3 +9,15 @@ The input [1, 2, 0] should give 3.
 
 You can modify the input array in-place.
 '''
+
+def smallestInt(input_list):
+	new_l = input_list
+	new_l.sort()
+
+	i = min(new_l)
+	for val in new_l:
+		if val != i and all([i < x for x in new_l[i:]]):
+			return i
+		i += 1
+
+	return i
