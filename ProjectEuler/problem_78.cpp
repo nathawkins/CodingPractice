@@ -37,9 +37,35 @@ long pN(long n, int* gk, int start, int len){
     return sum;
 }
 
+long* computePartitions(long* arr, long endpoint){
+    arr[0] = 1;
+    int coeff;
+    int pent1;
+    int pent2;
+    for(long n = 1; n < endpoint; n++){
+        for(int k = 1; k <= n; k++){
+            coeff = pow(-1, k + 1);
+            pent1 = pentN(k);
+            pent2 = pentN(-1*k);
+
+            if (n - pent1 >= 0){
+                arr[n] += coeff*arr[n-pent1];
+            }
+
+            if (n - pent2 >= 0){
+                arr[n] += coeff*arr[n-pent2];
+            }
+            arr[n] %= 1000000;
+        }
+    }
+    return arr;
+}
+
 int main(int argc, char* argv[]){
-    int arr[500];
-    int* g = generalizedPentNumbers(arr, 500);
-    cout << pN(5, g, 0, 500) << endl;
+    long N = strtol(argv[1], NULL, 10);
+    long arr[N] = {0};
+    long* partitions = computePartitions(arr, N);
+    for(int i = 0; i < N; i++)
+        cout << partitions[i] << endl;
     return 0;
 }
