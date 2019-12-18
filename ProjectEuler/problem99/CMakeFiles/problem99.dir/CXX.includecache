@@ -1,0 +1,24 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/nathawk/Documents/Repositories/CodingPractice/ProjectEuler/problem99/main.cpp
+iostream
+-
+fstream
+-
+string
+-
+map
+-
+vector
+-
+sstream
+-
+cmath
+-
+
